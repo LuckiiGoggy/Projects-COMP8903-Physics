@@ -23,7 +23,7 @@ using System.Collections.Generic;
 /// The KeyCodes for the movement and the modification of the mass 
 /// can be specified on the Unity Editor.
 /// </summary>
-public class MovablePhysicsObject : MonoBehaviour {
+public class MovablePhysicsObject : PhysicsObject {
 
     /// <summary>
     /// Initial Position of the Movable Physics Object
@@ -125,6 +125,19 @@ public class MovablePhysicsObject : MonoBehaviour {
     public bool m_IsDragOn;
     
     void Start () {
+        Move(m_InitPosition * m_MetersToUnits);
+    }
+
+    /// <summary>
+    /// Resets the position, acceleration, and velocity
+    /// </summary>
+    public void Reset()
+    {
+        m_Velocity = Vector3.zero;
+        m_Acceleration = Vector3.zero;
+        m_Position = Vector3.zero;
+        transform.localPosition = Vector3.zero;
+
         Move(m_InitPosition * m_MetersToUnits);
     }
     

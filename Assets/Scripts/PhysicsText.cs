@@ -28,7 +28,7 @@ public class PhysicsText : MonoBehaviour {
     /// <summary>
     /// The target MovablePhysicsObject that the Text will pull data from.
     /// </summary>
-    public MovablePhysicsObject m_TargetObject;
+    public PhysicsObject m_TargetObject;
 
     /// <summary>
     /// The targeted variable that needs to be pulled from the MovablePhysicsObject
@@ -61,18 +61,19 @@ public class PhysicsText : MonoBehaviour {
     {
         string result = m_DesiredPrint;
         
+
         var target = m_TargetObject.GetType().GetField(m_TargetVar).GetValue(m_TargetObject);
 
         switch (target.GetType().ToString())
         {
             case "UnityEngine.Vector3":
-                result = ReplaceFirst(result, c_EscapeCharacter, ((Vector3)target).ToString(m_SpecifiedStringFormat));
+                result = ReplaceFirst(result, c_EscapeCharacter, (m_TargetObject.GetVariable<Vector3>(m_TargetVar)).ToString(m_SpecifiedStringFormat));
                 break;
             case "UnityEngine.Vector2":
-                result = ReplaceFirst(result, c_EscapeCharacter, ((Vector2)target).ToString(m_SpecifiedStringFormat));
+                result = ReplaceFirst(result, c_EscapeCharacter, (m_TargetObject.GetVariable<Vector2>(m_TargetVar)).ToString(m_SpecifiedStringFormat));
                 break;
             case "System.Single":
-                result = ReplaceFirst(result, c_EscapeCharacter, ((float)target).ToString(m_SpecifiedStringFormat));
+                result = ReplaceFirst(result, c_EscapeCharacter, (m_TargetObject.GetVariable<float>(m_TargetVar)).ToString(m_SpecifiedStringFormat));
                 break;
 
             default:
@@ -96,4 +97,5 @@ public class PhysicsText : MonoBehaviour {
 
         return ndex < 0 ? text : text.Substring(0, ndex) + replace + text.Substring(ndex + keyword.Length);
     }
+
 }

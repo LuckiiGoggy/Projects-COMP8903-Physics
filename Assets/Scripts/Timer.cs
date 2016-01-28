@@ -19,7 +19,17 @@ public class Timer : MonoBehaviour {
     /// <summary>
     /// End time of the timer
     /// </summary>
-    public float m_EndTime;    
+    public float m_EndTime;
+
+    /// <summary>
+    /// Defines if the timer counts up or counts down
+    /// </summary>
+    public bool m_IsCountDown;
+
+    /// <summary>
+    /// Defines if the time is stopped.
+    /// </summary>
+    public bool m_IsStopped;
 
 	// Use this for initialization
 	void Start () {
@@ -28,13 +38,29 @@ public class Timer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (m_CurrTime > m_EndTime)
+        if (m_IsStopped) return;
+
+        if(m_IsCountDown)
         {
-            m_CurrTime -= Time.fixedDeltaTime;
+            if (m_CurrTime > m_EndTime)
+            {
+                m_CurrTime -= Time.fixedDeltaTime;
 
-            m_CurrTime = m_CurrTime < m_EndTime ? m_EndTime : m_CurrTime;
+                m_CurrTime = m_CurrTime < m_EndTime ? m_EndTime : m_CurrTime;
 
-            GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
+                GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
+            }
+        }
+        else
+        {
+            if (m_CurrTime < m_EndTime)
+            {
+                m_CurrTime += Time.fixedDeltaTime;
+
+                m_CurrTime = m_CurrTime > m_EndTime ? m_EndTime : m_CurrTime;
+
+                GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
+            }
         }
 
 	}
@@ -45,5 +71,6 @@ public class Timer : MonoBehaviour {
     public void Reset()
     {
         m_CurrTime = m_StartTime;
+        GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
     }
 }

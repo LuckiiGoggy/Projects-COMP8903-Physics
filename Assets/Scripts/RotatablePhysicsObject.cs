@@ -4,7 +4,7 @@ using System.Collections;
 /// <summary>
 /// Physics Object that can be rotated based on Keyboard inputs
 /// </summary>
-public class RotatablePhysicsObject : MonoBehaviour {
+public class RotatablePhysicsObject : PhysicsObject {
 
     /// <summary>
     /// KeyCode to increase the angle of the rotateable object
@@ -50,11 +50,20 @@ public class RotatablePhysicsObject : MonoBehaviour {
 	}
 
     /// <summary>
+    /// Resets the rotation and the angle 
+    /// </summary>
+    public void Reset()
+    {
+        m_FacingVector = m_InitialFacingVector;
+        m_Angle = 0;
+    }
+
+    /// <summary>
     /// Handle the Key Inputs that modifies the angle of the object
     /// </summary>
     private void HandleKeyInputs()
     {
-        if (Input.GetKeyDown(m_IncreaseAngle)) m_Angle += m_AngleIncrement;
-        if (Input.GetKeyDown(m_DecreaseAngle)) m_Angle -= m_AngleIncrement;
+        if (Input.GetKey(m_IncreaseAngle)) m_Angle += m_AngleIncrement;
+        if (Input.GetKey(m_DecreaseAngle)) m_Angle -= m_AngleIncrement;
     }
 }
