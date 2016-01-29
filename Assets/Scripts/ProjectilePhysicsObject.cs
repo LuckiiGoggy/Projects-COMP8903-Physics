@@ -38,10 +38,16 @@ public class ProjectilePhysicsObject : PhysicsObject {
     /// </summary>
     private MovablePhysicsObject m_SelfMPO;
 
+    /// <summary>
+    /// The explosion sound on collision
+    /// </summary>
+    public AudioSource m_Explosion;
+
 	// Use this for initialization
 	void Start () {
         m_SelfMPO = GetComponent<MovablePhysicsObject>();
         m_TrajectoryIndicators = new List<Transform>();
+        m_Explosion = GetComponent<AudioSource>();
         
     }
 
@@ -76,6 +82,7 @@ public class ProjectilePhysicsObject : PhysicsObject {
 
         if((m_SelfMPO.m_Position - m_Target.m_Position).magnitude < 1)
         {
+            m_Explosion.Play();
             Time.timeScale = 0;
         }
     }

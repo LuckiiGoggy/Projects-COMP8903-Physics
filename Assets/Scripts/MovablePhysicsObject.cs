@@ -32,19 +32,19 @@ public class MovablePhysicsObject : PhysicsObject {
     /// <summary>
     /// Minimum position of the Movable Physics Object
     /// </summary>
-    public Vector2 m_MinLocation;
+    public Vector3 m_MinLocation;
     /// <summary>
     /// Maximum position of the Movable Physics Object
     /// </summary>
-    public Vector2 m_MaxLocation;
+    public Vector3 m_MaxLocation;
     /// <summary>
     /// The value of each movement key input
     /// </summary>
-    public Vector2 m_MovementIncrements;
+    public Vector3 m_MovementIncrements;
     /// <summary>
     /// The current position of the Movable Physics Object
     /// </summary>
-    public Vector2 m_Position;
+    public Vector3 m_Position;
 
     /// <summary>
     /// The minimum mass of the Movable Physics Object
@@ -102,7 +102,7 @@ public class MovablePhysicsObject : PhysicsObject {
     /// <summary>
     /// The center of mass of the Movable Physics Object and all of its attachments
     /// </summary>
-    public Vector2 m_CenterOfMass;
+    public Vector3 m_CenterOfMass;
     /// <summary>
     /// The moment of inertia of the Movable Physics Object with all of its attachments
     /// </summary>
