@@ -49,6 +49,11 @@ public class Timer : MonoBehaviour {
                 m_CurrTime = m_CurrTime < m_EndTime ? m_EndTime : m_CurrTime;
 
                 GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
+
+            }
+            else
+            {
+                Time.timeScale = 0;
             }
         }
         else
@@ -60,6 +65,11 @@ public class Timer : MonoBehaviour {
                 m_CurrTime = m_CurrTime > m_EndTime ? m_EndTime : m_CurrTime;
 
                 GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
+            }
+            else
+            {
+
+                Time.timeScale = 0;
             }
         }
 

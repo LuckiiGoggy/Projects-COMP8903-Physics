@@ -72,14 +72,14 @@ public class ProjectileLauncher3D : PhysicsObject {
     public MovablePhysicsObject m_Target;
 
     /// <summary>
-    /// The correct low gun angle to make the shot.
+    /// The correct alpha gun angle to make the shot.
     /// </summary>
-    public float m_CorrectGunAngleLow;
+    public float m_CorrectGunAngleAlpha;
 
     /// <summary>
-    /// The correct high gun angle to make the shot.
+    /// The correct alpha gun angle to make the shot.
     /// </summary>
-    public float m_CorrectGunAngleHigh;
+    public float m_CorrentGunAngleGamma;
 
     /// <summary>
     /// The range between the gun and the target.
@@ -124,8 +124,20 @@ public class ProjectileLauncher3D : PhysicsObject {
 
         m_Range = (m_Target.GetComponent<MovablePhysicsObject>().m_Position - GetComponent<MovablePhysicsObject>().m_Position).magnitude;
 
-        m_CorrectGunAngleLow = Mathf.Asin((9.81f * m_Range) / (m_ProjectileInitialVelocityMagnitude * m_ProjectileInitialVelocityMagnitude)) / 2 * Mathf.Rad2Deg;
-        m_CorrectGunAngleHigh = 360 + (Mathf.Asin((9.81f * m_Range) / (m_ProjectileInitialVelocityMagnitude * m_ProjectileInitialVelocityMagnitude)) / 2 * Mathf.Rad2Deg);
+        Vector3 rangeVec = (m_Target.GetComponent<MovablePhysicsObject>().m_Position - GetComponent<MovablePhysicsObject>().m_Position);
+
+        Debug.Log(rangeVec);
+
+        //m_CorrectGunAngleAlpha = Mathf.Asin((9.81f * m_Range) / (m_ProjectileInitialVelocityMagnitude * m_ProjectileInitialVelocityMagnitude)) / 2 * Mathf.Rad2Deg;
+        //m_CorrectGunAngleHigh = 360 + (Mathf.Asin((9.81f * m_Range) / (m_ProjectileInitialVelocityMagnitude * m_ProjectileInitialVelocityMagnitude)) / 2 * Mathf.Rad2Deg);
+        m_CorrentGunAngleGamma = CalcGamma(rangeVec.x, rangeVec.z);
+        m_CorrectGunAngleAlpha = CalcAngle(rangeVec.x, rangeVec.z);
+
+
+        //auto-aim
+        RotatablePhysicsObject3D rotObj = GetComponent<RotatablePhysicsObject3D>();
+        rotObj.m_Angles.z = m_CorrectGunAngleAlpha;
+        rotObj.m_Angles.y = m_CorrentGunAngleGamma;
     }
 
     /// <summary>
@@ -144,5 +156,24 @@ public class ProjectileLauncher3D : PhysicsObject {
         m_ProjectileToLaunch.GetComponent<MovablePhysicsObject>().m_Acceleration = new Vector3(0, -9.81f, 0);
         m_ProjectileToLaunch.m_InFlight = true;
 
+    }
+
+
+    float CalcAngle(float x, float z)
+    {
+        float angle;
+        float a = Mathf.Asin(9.81f * (Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(z, 2))) / (100f * 100f));
+        //if (180 - (a * Mathf.Rad2Deg) > a * Mathf.Rad2Deg)
+           // a = 180 - (a * Mathf.Rad2Deg);
+        angle = a / 2 * Mathf.Rad2Deg;
+        return angle;
+    }
+
+    float CalcGamma(float x, float z)
+    {
+        float gamma = Mathf.Acos(x / Mathf.Sqrt(x * x + z * z)) * Mathf.Rad2Deg;
+
+        if (z > 0) return -gamma;
+        return gamma;
     }
 }

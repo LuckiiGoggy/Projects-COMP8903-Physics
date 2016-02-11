@@ -84,6 +84,14 @@ public class MovablePhysicsObject : PhysicsObject {
     /// The specified keycode for the right movement of the Movable Physics Object
     /// </summary>
     public KeyCode m_RightMove;
+    /// <summary>
+    /// The specified keycode for the forward movement of the Movable Physics Object
+    /// </summary>
+    public KeyCode m_ForwardMove;
+    /// <summary>
+    /// The specified keycode for the backward movement of the Movable Physics Object
+    /// </summary>
+    public KeyCode m_BackwardMove;
 
     /// <summary>
     /// The specified keycode for increasing the mass of the Movable Physics Object
@@ -181,6 +189,12 @@ public class MovablePhysicsObject : PhysicsObject {
 
         if (Input.GetKey(m_DownMove) && (transform.localPosition.y / m_MetersToUnits - m_MovementIncrements.y >= m_MinLocation.y))
             moveVec.y -= m_MovementIncrements.y * m_MetersToUnits;
+
+        if (Input.GetKey(m_ForwardMove) && (transform.localPosition.z / m_MetersToUnits + m_MovementIncrements.z <= m_MaxLocation.z))
+            moveVec.z += m_MovementIncrements.z * m_MetersToUnits;
+
+        if (Input.GetKey(m_BackwardMove) && (transform.localPosition.z / m_MetersToUnits - m_MovementIncrements.z >= m_MinLocation.z))
+            moveVec.z -= m_MovementIncrements.z * m_MetersToUnits;
 
         return moveVec;
     }

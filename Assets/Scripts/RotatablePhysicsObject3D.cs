@@ -66,6 +66,7 @@ public class RotatablePhysicsObject3D : PhysicsObject {
        
 	}
 
+
     /// <summary>
     /// Resets the rotation and the angle 
     /// </summary>

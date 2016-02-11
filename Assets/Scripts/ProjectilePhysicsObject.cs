@@ -64,11 +64,13 @@ public class ProjectilePhysicsObject : PhysicsObject {
         }
         m_InFlight = false;
         m_TrajectoryIndicators = new List<Transform>();
+
+        GetComponent<TrailRenderer>().Clear();
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (m_InFlight) m_TrajectoryIndicators.Add(Instantiate(m_TrajectoryIndicator, transform.position, transform.rotation) as Transform);
+        //if (m_InFlight) m_TrajectoryIndicators.Add(Instantiate(m_TrajectoryIndicator, transform.position, transform.rotation) as Transform);
 
 
         if(m_SelfMPO.m_Position.x > m_MaximumBounds.x || m_SelfMPO.m_Position.y > m_MaximumBounds.y)
@@ -80,7 +82,7 @@ public class ProjectilePhysicsObject : PhysicsObject {
             Time.timeScale = 0;
         }
 
-        if((m_SelfMPO.m_Position - m_Target.m_Position).magnitude < 1)
+        if((m_SelfMPO.m_Position - m_Target.m_Position).magnitude < 2)
         {
             m_Explosion.Play();
             Time.timeScale = 0;

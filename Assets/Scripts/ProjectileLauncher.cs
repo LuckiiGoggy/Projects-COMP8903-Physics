@@ -103,6 +103,7 @@ public class ProjectileLauncher : PhysicsObject {
     {
         m_HasLaunched = false;
         m_ProjectileToLaunch.Reset();
+        m_ProjectileToLaunch.GetComponentInChildren<AngularPhysics>().Reset();
         m_Timer.Reset();
         m_Timer.m_IsStopped = true;
         Time.timeScale = 1;
@@ -143,6 +144,7 @@ public class ProjectileLauncher : PhysicsObject {
         m_ProjectileToLaunch.GetComponent<MovablePhysicsObject>().m_Velocity = trajectory * m_ProjectileInitialVelocityMagnitude;
         m_ProjectileToLaunch.GetComponent<MovablePhysicsObject>().m_Acceleration = new Vector3(0, -9.81f, 0);
         m_ProjectileToLaunch.m_InFlight = true;
+        m_ProjectileToLaunch.GetComponentInChildren<AngularPhysics>().m_IsActive = true;
 
     }
 }
