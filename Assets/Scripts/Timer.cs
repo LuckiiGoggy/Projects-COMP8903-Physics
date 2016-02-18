@@ -9,6 +9,10 @@ using UnityEngine.UI;
 public class Timer : MonoBehaviour {
 
     /// <summary>
+    /// The label to prepend to the time print out
+    /// </summary>
+    public string m_Label;
+    /// <summary>
     /// Start time of the timer
     /// </summary>
     public float m_StartTime;
@@ -48,7 +52,7 @@ public class Timer : MonoBehaviour {
 
                 m_CurrTime = m_CurrTime < m_EndTime ? m_EndTime : m_CurrTime;
 
-                GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
+                GetComponent<Text>().text = m_Label + m_CurrTime.ToString("F1") + "s";
 
             }
             else
@@ -64,7 +68,7 @@ public class Timer : MonoBehaviour {
 
                 m_CurrTime = m_CurrTime > m_EndTime ? m_EndTime : m_CurrTime;
 
-                GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
+                GetComponent<Text>().text = m_Label + m_CurrTime.ToString("F1") + "s";
             }
             else
             {

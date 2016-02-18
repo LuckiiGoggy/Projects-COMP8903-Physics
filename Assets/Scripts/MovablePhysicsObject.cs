@@ -132,6 +132,16 @@ public class MovablePhysicsObject : PhysicsObject {
     /// </summary>
     public bool m_IsDragOn;
     
+    ///<summary>
+    /// The current time of the game.
+    ///</summary>
+    public Timer m_Time;
+    
+    ///<summary>
+    /// The Force currently being applied to the object
+    ///</summary>
+    public Vector3 m_TotalForce;
+    
     void Start () {
         Move(m_InitPosition * m_MetersToUnits);
     }
@@ -156,6 +166,9 @@ public class MovablePhysicsObject : PhysicsObject {
         //add movements specified by keyboard presses
         moveVec = HandleMovementKeyInputs(moveVec);
 
+        //Apply the effect of the forces
+        ApplyForce();
+
         //apply vector movements
         moveVec = ApplyVelocity(moveVec);
 
@@ -170,7 +183,17 @@ public class MovablePhysicsObject : PhysicsObject {
         //update momentum of inertia
         m_MOI = TotalMOI();
     }
-       
+    
+    ///<summary>
+    /// Apply the effects of the applied force of the object.
+    ///</summary>
+    private void ApplyForce()
+    {
+        m_Acceleration = m_TotalForce / TotalMass();
+        m_TotalForce = Vector3.zero;
+        if(TotalMass() == 0) m_Acceleration = Vector3.zero;
+    }
+    
     /// <summary>
     /// Handle key inputs and modify the movement vector accordingly.
     /// </summary>
@@ -252,7 +275,7 @@ public class MovablePhysicsObject : PhysicsObject {
     /// <param name="moveVec">The movement vector that the object should move with.</param>
     public void Move(Vector3 moveVec)
     {
-        GetComponent<Transform>().Translate(moveVec);
+        transform.Translate(moveVec);
         MoveAttached(moveVec);
         m_Position = transform.localPosition / m_MetersToUnits;
     }
@@ -326,7 +349,7 @@ public class MovablePhysicsObject : PhysicsObject {
     /// The total mass of the MovablePhysicsObject.
     /// </summary>
     /// <returns>total mass of the MovablePhysicsObject</returns>
-    private float TotalMass()
+    public float TotalMass()
     {
         float sum = 0;
 
@@ -378,5 +401,23 @@ public class MovablePhysicsObject : PhysicsObject {
         objects.AddRange(m_Attached);
 
         return objects;
+    }
+    
+    ///<summary>
+    /// Applies a force to the object
+    ///</summary>
+    ///<param name="_Force">Force to apply to object</param>
+    public void ApplyForce(Vector3 _Force)
+    {
+        m_TotalForce += _Force;
+    }
+        
+    ///<summary>
+    /// Sets the Total Applied Force to the object
+    ///</summary>
+    ///<param name="_Force">Force to apply to object</param>
+    public void SetForce(Vector3 _Force)
+    {
+        m_TotalForce = _Force;
     }
 }
