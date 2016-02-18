@@ -35,6 +35,11 @@ public class Timer : MonoBehaviour {
     /// </summary>
     public bool m_IsStopped;
 
+	/// <summary>
+	/// KeyCode for starting the time
+	/// </summary>
+	public KeyCode m_StartTimer;
+
 	// Use this for initialization
 	void Start () {
         Reset();
@@ -42,6 +47,7 @@ public class Timer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+		if(Input.GetKeyDown(m_StartTimer)) m_IsStopped = false;
         if (m_IsStopped) return;
 
         if(m_IsCountDown)

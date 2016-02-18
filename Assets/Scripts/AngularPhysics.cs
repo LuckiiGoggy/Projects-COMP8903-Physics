@@ -11,12 +11,19 @@ public class AngularPhysics : PhysicsObject {
     public Vector3 m_PointVelocity;
     public Vector3 m_PointAcceleration;
 
+	public Vector3 m_Radial;
+
     public MovablePhysicsObject m_Object;
-    public Transform m_Point;
+
+	public Transform m_Force;
 
     public Vector3 m_Position;
 
     public bool m_IsActive;
+
+	public Vector3 m_Torque;
+
+	public Timer m_Time;
 
 	// Use this for initialization
 	void Start () {
@@ -26,30 +33,46 @@ public class AngularPhysics : PhysicsObject {
 	
 	// Update is called once per frame
 	void FixedUpdate ()
-    {
-        Debug.Log(transform.rotation * Vector3.right * .2f);
+	{
+		if (m_Force != null)
+			m_Radial = m_Force.transform.localPosition / m_Object.m_MetersToUnits - m_Object.m_CenterOfMass;
+		else
+			m_Radial = Vector3.zero;
 
-        Vector3 R = transform.rotation * Vector3.right * .2f;
 
-        m_Position = (transform.rotation * Vector3.right * .2f + m_Object.GetComponent<Transform>().localPosition) * 100f;
+		if(m_Force != null)
+			m_Torque = Vector3.Cross (m_Radial, m_Force.GetComponent<ForcePhysics> ().m_Force);
 
-        if (m_IsActive) ApplyAngularVelocity();
+		if (m_Object.m_MOI != 0 && m_Time.m_CurrTime <= 2.45)
+			m_AngularAcceleration = m_Torque / m_Object.m_MOI;
+		else
+			m_AngularAcceleration = Vector3.zero;
 
-        m_PointVelocity = m_Object.m_Velocity + Vector3.Cross(m_CurrentAngularVelocity, R * 100f);
-        m_PointAcceleration = m_Object.m_Acceleration + Vector3.Cross(m_AngularAcceleration, R * 100f) + Vector3.Cross(m_CurrentAngularVelocity, Vector3.Cross(m_CurrentAngularVelocity, R * 100f));
+
+		m_Position = (m_Object.transform.rotation * Vector3.right) * 100f;
+
+		if (m_IsActive && !m_Time.m_IsStopped) ApplyAngularVelocity();
+
+
+
+		m_PointVelocity = m_Object.m_Velocity + Vector3.Cross(m_CurrentAngularVelocity, m_Radial * 100f);
+		m_PointAcceleration = m_Object.m_Acceleration + Vector3.Cross(m_AngularAcceleration, m_Radial * 100f) + Vector3.Cross(m_CurrentAngularVelocity, Vector3.Cross(m_CurrentAngularVelocity, m_Radial * 100f));
 
     }
 
     void ApplyAngularVelocity()
     {
-        Vector3 degAngularV = m_CurrentAngularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime;
+		//Debug.Log ("A");
+		Vector3 degAngularV = m_CurrentAngularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime + 0.5f * m_AngularAcceleration * Mathf.Rad2Deg * Time.fixedDeltaTime * Time.fixedDeltaTime;
 
-        transform.Rotate(degAngularV);
+		m_Object.RotateObject(degAngularV);
 
-        m_AngularDisplacement += m_CurrentAngularVelocity * Time.fixedDeltaTime;
+		m_AngularDisplacement += m_CurrentAngularVelocity * Time.fixedDeltaTime + 0.5f * m_AngularAcceleration * Time.fixedDeltaTime * Time.fixedDeltaTime;
 
-        m_CurrentAngularVelocity = m_CurrentAngularVelocity + m_AngularAcceleration * Time.fixedDeltaTime;
-        
+
+
+		m_CurrentAngularVelocity = m_CurrentAngularVelocity + m_AngularAcceleration * Time.fixedDeltaTime;
+
     }
 
     public void Reset()

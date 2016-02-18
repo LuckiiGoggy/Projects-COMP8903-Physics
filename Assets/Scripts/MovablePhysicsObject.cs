@@ -275,10 +275,22 @@ public class MovablePhysicsObject : PhysicsObject {
     /// <param name="moveVec">The movement vector that the object should move with.</param>
     public void Move(Vector3 moveVec)
     {
-        transform.Translate(moveVec);
+		transform.Translate(moveVec, Space.World);
         MoveAttached(moveVec);
         m_Position = transform.localPosition / m_MetersToUnits;
     }
+
+	public void RotateObject(Vector3 _theta)
+	{
+		transform.Rotate (_theta);
+		foreach(MovablePhysicsObject obj in m_Attached)
+		{
+			//obj.GetComponent<Transform> ().RotateAround (transform.position, Vector3.right, _theta.x);
+			//obj.GetComponent<Transform> ().RotateAround (transform.position, Vector3.up, _theta.y);
+			//Debug.Log(transform.position);
+			obj.GetComponent<Transform> ().RotateAround (transform.position, Vector3.forward, _theta.z);
+		}
+	}
 
     /// <summary>
     /// Moves all the attached MovablePhysicsObjects that this MovablePhysicsObjects has.
@@ -290,7 +302,7 @@ public class MovablePhysicsObject : PhysicsObject {
         {
             foreach(MovablePhysicsObject obj in m_Attached)
             {
-                obj.GetComponent<Transform>().Translate(moveVec);
+				obj.GetComponent<Transform>().Translate(moveVec, Space.World);
                 obj.m_MinLocation.x += moveVec.x / obj.m_MetersToUnits;
                 obj.m_MinLocation.y += moveVec.y / obj.m_MetersToUnits;
                 obj.m_MaxLocation.x += moveVec.x / obj.m_MetersToUnits;
@@ -362,7 +374,7 @@ public class MovablePhysicsObject : PhysicsObject {
     /// Calculates the Total Moment of Inertia of a MovablePhysicsObject
     /// </summary>
     /// <returns>Total Moment of Inertia of a MovablePhysicsObject</returns>
-    private float TotalMOI()
+	private float TotalMOI()
     {
         float sum = 0;
 
@@ -370,7 +382,7 @@ public class MovablePhysicsObject : PhysicsObject {
         {
             float L = (obj.GetComponent<SpriteRenderer>().bounds.size.x) / obj.m_MetersToUnits;
             float W = (obj.GetComponent<SpriteRenderer>().bounds.size.y) / obj.m_MetersToUnits;
-            sum += (1F / 12F) * obj.m_Mass * (L * L + W * W) + obj.MH2();
+			sum += (1F / 12F) * obj.m_Mass * (L * L + W * W) + obj.MH2(m_CenterOfMass);
         }
 
         return sum;
@@ -380,11 +392,10 @@ public class MovablePhysicsObject : PhysicsObject {
     /// Calculates the result of Mass * Height * Height of the MovablePhysicsObject.
     /// </summary>
     /// <returns>result of Mass * Height * Height of the MovablePhysicsObject</returns>
-    private float MH2()
+	private float MH2(Vector3 _COM)
     {
         float result = 0;
-        Vector3 com = new Vector3(m_CenterOfMass.x, m_CenterOfMass.y, 0);
-        float h = (com - GetComponent<Transform>().localPosition / m_MetersToUnits).magnitude;
+		float h = (_COM - transform.localPosition / m_MetersToUnits).magnitude;
         result = m_Mass * h * h;
 
         return result;

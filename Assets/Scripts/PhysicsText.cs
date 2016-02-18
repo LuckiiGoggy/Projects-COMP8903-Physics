@@ -49,7 +49,7 @@ public class PhysicsText : MonoBehaviour {
     /// Every update the text is updated with the desired information in the desired format from 
     /// the desired MovablePhysicsObject.
     /// </summary>
-	void FixedUpdate () {
+	void Update () {
         GetComponent<Text>().text = GetText();
 	}
 
