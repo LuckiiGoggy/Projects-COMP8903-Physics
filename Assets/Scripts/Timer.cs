@@ -91,6 +91,6 @@ public class Timer : MonoBehaviour {
     public void Reset()
     {
         m_CurrTime = m_StartTime;
-        GetComponent<Text>().text = m_CurrTime.ToString("F1") + "s";
+		GetComponent<Text>().text = m_Label + m_CurrTime.ToString("F1") + "s";
     }
 }
