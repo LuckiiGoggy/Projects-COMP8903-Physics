@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 /// <summary>
 /// Projectile Launcher launches a projectile.
@@ -91,6 +92,22 @@ public class ProjectileLauncher3D : PhysicsObject {
     /// </summary>
     public KeyCode m_ResetKey;
 
+
+
+
+
+	public Text t_P;
+	public Text t_T;
+	public Text t_R;
+	public Text t_Mass;
+	public Text t_CA;
+	public Text t_A;
+	public Text t_CG;
+	public Text t_G;
+	public Text t_Time;
+	public Text t_V;
+
+
 	// Use this for initialization
 	void Start () {
 
@@ -110,23 +127,40 @@ public class ProjectileLauncher3D : PhysicsObject {
 
     public void Update()
     {
-        if (Input.GetKey(m_ResetKey)) Reset();
+		if (Input.GetKey(m_ResetKey)) Reset();        
+		if (Input.GetKeyDown(m_IncreaseInitialVelocityMagnitude))
+			m_ProjectileInitialVelocityMagnitude = Mathf.Min(m_ProjectileInitialVelocityMagnitude + m_ProjectileInitialVelocityMagnitudeIncrement, m_MaximumProjectileInitialVelocityMagnitude);
+		if (Input.GetKeyDown(m_DecreaseInitialVelocityMagnitude))
+			m_ProjectileInitialVelocityMagnitude = Mathf.Max(m_ProjectileInitialVelocityMagnitude - m_ProjectileInitialVelocityMagnitudeIncrement, m_MinimumProjectileInitialVelocityMagnitude);
+		if (Input.GetKeyDown(m_LaunchProjectile) && !m_HasLaunched)
+			LaunchProjectile();
+
+		t_P.text = "Projectile Position: " + m_ProjectileToLaunch.GetComponent<MovablePhysicsObject>().m_Position.ToString ("F2");
+		t_T.text = "Target Position: " + m_Target.m_Position.ToString ("F2");
+		t_R.text = "Range Position: " + m_Range.ToString ("F2");
+
+		t_CA.text = "Correct Alpha: " + m_CorrectGunAngleAlpha.ToString ("F2");
+		t_A.text = " Alpha: " + GetComponent<RotatablePhysicsObject3D>().m_Angles.x;
+		t_CG.text = "Correct Gamma: " + m_CorrentGunAngleGamma.ToString ("F2");
+		t_G.text = " Gamma: " + GetComponent<RotatablePhysicsObject3D>().m_Angles.y;
+
+		t_Time.text = " Time: " + m_Timer.m_CurrTime;
+
+		t_V.text = "Velocity: " + m_ProjectileInitialVelocityMagnitude;
+
+
+
     }
 
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (Input.GetKeyDown(m_IncreaseInitialVelocityMagnitude))
-            m_ProjectileInitialVelocityMagnitude = Mathf.Min(m_ProjectileInitialVelocityMagnitude + m_ProjectileInitialVelocityMagnitudeIncrement, m_MaximumProjectileInitialVelocityMagnitude);
-        if (Input.GetKeyDown(m_DecreaseInitialVelocityMagnitude))
-            m_ProjectileInitialVelocityMagnitude = Mathf.Max(m_ProjectileInitialVelocityMagnitude - m_ProjectileInitialVelocityMagnitudeIncrement, m_MinimumProjectileInitialVelocityMagnitude);
-        if (Input.GetKeyDown(m_LaunchProjectile) && !m_HasLaunched)
-            LaunchProjectile();
+
 
         m_Range = (m_Target.GetComponent<MovablePhysicsObject>().m_Position - GetComponent<MovablePhysicsObject>().m_Position).magnitude;
 
         Vector3 rangeVec = (m_Target.GetComponent<MovablePhysicsObject>().m_Position - GetComponent<MovablePhysicsObject>().m_Position);
 
-        Debug.Log(rangeVec);
+//        Debug.Log(rangeVec);
 
         //m_CorrectGunAngleAlpha = Mathf.Asin((9.81f * m_Range) / (m_ProjectileInitialVelocityMagnitude * m_ProjectileInitialVelocityMagnitude)) / 2 * Mathf.Rad2Deg;
         //m_CorrectGunAngleHigh = 360 + (Mathf.Asin((9.81f * m_Range) / (m_ProjectileInitialVelocityMagnitude * m_ProjectileInitialVelocityMagnitude)) / 2 * Mathf.Rad2Deg);
@@ -152,10 +186,11 @@ public class ProjectileLauncher3D : PhysicsObject {
         m_Timer.m_IsStopped = false;
         m_HasLaunched = true;
 
-        m_ProjectileToLaunch.GetComponent<MovablePhysicsObject>().m_Velocity = trajectory * m_ProjectileInitialVelocityMagnitude;
-        m_ProjectileToLaunch.GetComponent<MovablePhysicsObject>().m_Acceleration = new Vector3(0, -9.81f, 0);
+		m_ProjectileToLaunch.ApplyVelocity (trajectory * m_ProjectileInitialVelocityMagnitude);
+		m_ProjectileToLaunch.ApplyGravity (new Vector3(0, -9.81f, 0));
         m_ProjectileToLaunch.m_InFlight = true;
 
+		Debug.Log ("HALLO");
     }
 
 

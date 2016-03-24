@@ -144,7 +144,20 @@ public class MovablePhysicsObject : PhysicsObject {
     
     void Start () {
         Move(m_InitPosition * m_MetersToUnits);
+
+
+		//m_IsActive = true;
     }
+	/// <summary>
+	/// The bounds of the object.
+	/// </summary>
+	public Vector3 m_Bounds;
+
+	/// <summary>
+	/// The object is active.
+	/// </summary>
+	public bool m_IsActive;
+
 
     /// <summary>
     /// Resets the position, acceleration, and velocity
@@ -160,29 +173,33 @@ public class MovablePhysicsObject : PhysicsObject {
     }
     
     void FixedUpdate () {
-        //create a clean movement vector
-        Vector3 moveVec = Vector3.zero;
+		if (m_IsActive) {
+			//create a clean movement vector
+			Vector3 moveVec = Vector3.zero;
+			//Debug.Log ("A");
 
-        //add movements specified by keyboard presses
-        moveVec = HandleMovementKeyInputs(moveVec);
+			//Apply the effect of the forces
+			//ApplyForce();
 
-        //Apply the effect of the forces
-        ApplyForce();
+			//apply vector movements
+			moveVec = ApplyVelocity (moveVec);
 
-        //apply vector movements
-        moveVec = ApplyVelocity(moveVec);
+			//apply movement vector to the object
+			Move (moveVec);
 
-        //apply movement vector to the object
-        Move(moveVec);
-
-        //apply changes in mass
-        HandleMassKeyInputs();
-
-        //update center of mass
-        UpdateCOMTarget();
-        //update momentum of inertia
-        m_MOI = TotalMOI();
+			//update center of mass
+			UpdateCOMTarget ();
+			//update momentum of inertia
+			m_MOI = TotalMOI ();
+		}
     }
+
+	void Update(){
+		HandleMovementKeyInputs ();
+
+		//apply changes in mass
+		HandleMassKeyInputs ();
+	}
     
     ///<summary>
     /// Apply the effects of the applied force of the object.
@@ -197,29 +214,26 @@ public class MovablePhysicsObject : PhysicsObject {
     /// <summary>
     /// Handle key inputs and modify the movement vector accordingly.
     /// </summary>
-    /// <param name="moveVec">current movement vector</param>
-    /// <returns>modified movement vector</returns>
-    private Vector3 HandleMovementKeyInputs(Vector3 moveVec)
+    private void HandleMovementKeyInputs()
     {
-        if (Input.GetKey(m_LeftMove) && (transform.localPosition.x / m_MetersToUnits - m_MovementIncrements.x >= m_MinLocation.x))
-            moveVec.x -= m_MovementIncrements.x * m_MetersToUnits;
+		if (Input.GetKeyDown (m_LeftMove) && (transform.localPosition.x / m_MetersToUnits - m_MovementIncrements.x >= m_MinLocation.x))
+			transform.Translate(new Vector3 (-m_MovementIncrements.x * m_MetersToUnits, 0, 0));
 
-        if (Input.GetKey(m_RightMove) && (transform.localPosition.x / m_MetersToUnits + m_MovementIncrements.x <= m_MaxLocation.x))
-            moveVec.x += m_MovementIncrements.x * m_MetersToUnits;
+		if (Input.GetKeyDown(m_RightMove) && (transform.localPosition.x / m_MetersToUnits + m_MovementIncrements.x <= m_MaxLocation.x))
+			transform.Translate(new Vector3 (m_MovementIncrements.x * m_MetersToUnits, 0, 0));
 
-        if (Input.GetKey(m_UpMove) && (transform.localPosition.y / m_MetersToUnits + m_MovementIncrements.y <= m_MaxLocation.y))
-            moveVec.y += m_MovementIncrements.y * m_MetersToUnits;
+		if (Input.GetKeyDown(m_UpMove) && (transform.localPosition.y / m_MetersToUnits + m_MovementIncrements.y <= m_MaxLocation.y))
+			transform.Translate( new Vector3 (0, m_MovementIncrements.y * m_MetersToUnits, 0 ));
 
-        if (Input.GetKey(m_DownMove) && (transform.localPosition.y / m_MetersToUnits - m_MovementIncrements.y >= m_MinLocation.y))
-            moveVec.y -= m_MovementIncrements.y * m_MetersToUnits;
+		if (Input.GetKeyDown(m_DownMove) && (transform.localPosition.y / m_MetersToUnits - m_MovementIncrements.y >= m_MinLocation.y))
+			transform.Translate(new Vector3 (0, -m_MovementIncrements.y * m_MetersToUnits, 0));
 
-        if (Input.GetKey(m_ForwardMove) && (transform.localPosition.z / m_MetersToUnits + m_MovementIncrements.z <= m_MaxLocation.z))
-            moveVec.z += m_MovementIncrements.z * m_MetersToUnits;
+		if (Input.GetKeyDown(m_ForwardMove) && (transform.localPosition.z / m_MetersToUnits + m_MovementIncrements.z <= m_MaxLocation.z))
+			transform.Translate(new Vector3 (0, 0, m_MovementIncrements.z * m_MetersToUnits));
 
-        if (Input.GetKey(m_BackwardMove) && (transform.localPosition.z / m_MetersToUnits - m_MovementIncrements.z >= m_MinLocation.z))
-            moveVec.z -= m_MovementIncrements.z * m_MetersToUnits;
+		if (Input.GetKeyDown(m_BackwardMove) && (transform.localPosition.z / m_MetersToUnits - m_MovementIncrements.z >= m_MinLocation.z))
+			transform.Translate(new Vector3 (0, 0, -m_MovementIncrements.z * m_MetersToUnits));
 
-        return moveVec;
     }
 
     /// <summary>
@@ -380,8 +394,8 @@ public class MovablePhysicsObject : PhysicsObject {
 
         foreach (MovablePhysicsObject obj in GetAllOBjects())
         {
-            float L = (obj.GetComponent<SpriteRenderer>().bounds.size.x) / obj.m_MetersToUnits;
-            float W = (obj.GetComponent<SpriteRenderer>().bounds.size.y) / obj.m_MetersToUnits;
+			float L = m_Bounds.x;
+			float W = m_Bounds.y;
 			sum += (1F / 12F) * obj.m_Mass * (L * L + W * W) + obj.MH2(m_CenterOfMass);
         }
 

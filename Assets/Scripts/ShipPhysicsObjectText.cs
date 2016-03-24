@@ -30,7 +30,7 @@ public class ShipPhysicsObjectText : MonoBehaviour {
 		if (MassLabel != null)
 			MassLabel.text = "Mass: " + TargetObject.Mass.ToString("F2") + " m";
 		if (DepthLabel != null)
-			DepthLabel.text = "Depth: " + -TargetObject.Position.y.ToString("F2") + " m";
+			DepthLabel.text = "Depth: " + (-TargetObject.Position.y).ToString("F2") + " m";
 		if (PercentageDragLabel != null)
 			PercentageDragLabel.text = "Drag: " + (TargetObject.DragCoefficient / ShipPhysicsObject.MaximumDragCoefficient).ToString("F2");
 		if (TerminalVelocityLabel != null)

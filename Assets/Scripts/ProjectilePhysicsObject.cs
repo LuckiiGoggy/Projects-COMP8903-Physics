@@ -36,7 +36,7 @@ public class ProjectilePhysicsObject : PhysicsObject {
     /// <summary>
     /// The Movable Physics Object of this GameObject
     /// </summary>
-    private MovablePhysicsObject m_SelfMPO;
+    protected MovablePhysicsObject m_SelfMPO;
 
     /// <summary>
     /// The explosion sound on collision
@@ -48,7 +48,6 @@ public class ProjectilePhysicsObject : PhysicsObject {
         m_SelfMPO = GetComponent<MovablePhysicsObject>();
         m_TrajectoryIndicators = new List<Transform>();
         m_Explosion = GetComponent<AudioSource>();
-        
     }
 
     /// <summary>
@@ -65,27 +64,48 @@ public class ProjectilePhysicsObject : PhysicsObject {
         m_InFlight = false;
         m_TrajectoryIndicators = new List<Transform>();
 
-        GetComponent<TrailRenderer>().Clear();
+        //GetComponent<TrailRenderer>().Clear();
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        //if (m_InFlight) m_TrajectoryIndicators.Add(Instantiate(m_TrajectoryIndicator, transform.position, transform.rotation) as Transform);
+        if (m_InFlight) m_TrajectoryIndicators.Add(Instantiate(m_TrajectoryIndicator, transform.position, transform.rotation) as Transform);
 
 
         if(m_SelfMPO.m_Position.x > m_MaximumBounds.x || m_SelfMPO.m_Position.y > m_MaximumBounds.y)
         {
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
         }
         if (m_SelfMPO.m_Position.x < m_MinimumBounds.x || m_SelfMPO.m_Position.y < m_MinimumBounds.y)
         {
-            Time.timeScale = 0;
-        }
+            //Time.timeScale = 0;
+		}		
+
+		if (m_SelfMPO.m_Position.y < 0)
+		{
+			//StopProjectile ();
+		}
 
         if((m_SelfMPO.m_Position - m_Target.m_Position).magnitude < 2)
         {
-            m_Explosion.Play();
-            Time.timeScale = 0;
+			if(m_Explosion != null)
+            	m_Explosion.Play();
+			StopProjectile ();
         }
     }
+
+	protected void StopProjectile(){
+		m_SelfMPO.m_Velocity = Vector3.zero;
+		m_SelfMPO.m_Acceleration = Vector3.zero;
+		m_SelfMPO.m_Time.m_IsStopped = true;
+		m_InFlight = false;
+	}
+
+	public virtual void ApplyVelocity(Vector3 vec){
+		GetComponent<MovablePhysicsObject> ().m_Velocity = vec;
+	}
+
+	public virtual void ApplyGravity(Vector3 vec){
+		GetComponent<MovablePhysicsObject> ().m_Acceleration = vec;
+	}
 }

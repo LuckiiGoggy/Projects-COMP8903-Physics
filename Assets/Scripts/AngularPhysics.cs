@@ -43,10 +43,6 @@ public class AngularPhysics : PhysicsObject {
 		if(m_Force != null)
 			m_Torque = Vector3.Cross (m_Radial, m_Force.GetComponent<ForcePhysics> ().m_Force);
 
-		if (m_Object.m_MOI != 0 && m_Time.m_CurrTime <= 2.45)
-			m_AngularAcceleration = m_Torque / m_Object.m_MOI;
-		else
-			m_AngularAcceleration = Vector3.zero;
 
 
 		m_Position = (m_Object.transform.rotation * Vector3.right) * 100f;
@@ -54,6 +50,10 @@ public class AngularPhysics : PhysicsObject {
 		if (m_IsActive && !m_Time.m_IsStopped) ApplyAngularVelocity();
 
 
+		if (m_Object.m_MOI != 0 && m_Time.m_CurrTime <= 2.65)
+			m_AngularAcceleration = m_Torque / m_Object.m_MOI;
+		else
+			m_AngularAcceleration = Vector3.zero;
 
 		m_PointVelocity = m_Object.m_Velocity + Vector3.Cross(m_CurrentAngularVelocity, m_Radial * 100f);
 		m_PointAcceleration = m_Object.m_Acceleration + Vector3.Cross(m_AngularAcceleration, m_Radial * 100f) + Vector3.Cross(m_CurrentAngularVelocity, Vector3.Cross(m_CurrentAngularVelocity, m_Radial * 100f));
