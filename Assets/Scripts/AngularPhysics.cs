@@ -23,8 +23,6 @@ public class AngularPhysics : PhysicsObject {
 
 	public Vector3 m_Torque;
 
-	public Timer m_Time;
-
 	// Use this for initialization
 	void Start () {
         m_CurrentAngularVelocity = m_InitalAngularVelocity;
@@ -47,10 +45,10 @@ public class AngularPhysics : PhysicsObject {
 
 		m_Position = (m_Object.transform.rotation * Vector3.right) * 100f;
 
-		if (m_IsActive && !m_Time.m_IsStopped) ApplyAngularVelocity();
+		if (m_IsActive) ApplyAngularVelocity();
 
 
-		if (m_Object.m_MOI != 0 && m_Time.m_CurrTime <= 2.65)
+		if (m_Object.m_MOI != 0)
 			m_AngularAcceleration = m_Torque / m_Object.m_MOI;
 		else
 			m_AngularAcceleration = Vector3.zero;
