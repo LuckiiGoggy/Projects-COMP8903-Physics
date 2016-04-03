@@ -62,12 +62,10 @@ public class AngularPhysics : PhysicsObject {
     {
 		//Debug.Log ("A");
 		Vector3 degAngularV = m_CurrentAngularVelocity * Mathf.Rad2Deg * Time.fixedDeltaTime + 0.5f * m_AngularAcceleration * Mathf.Rad2Deg * Time.fixedDeltaTime * Time.fixedDeltaTime;
-
+        //Debug.Log(degAngularV);
 		m_Object.RotateObject(degAngularV);
 
 		m_AngularDisplacement += m_CurrentAngularVelocity * Time.fixedDeltaTime + 0.5f * m_AngularAcceleration * Time.fixedDeltaTime * Time.fixedDeltaTime;
-
-
 
 		m_CurrentAngularVelocity = m_CurrentAngularVelocity + m_AngularAcceleration * Time.fixedDeltaTime;
 
